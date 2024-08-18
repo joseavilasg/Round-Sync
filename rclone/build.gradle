@@ -27,7 +27,8 @@ ext {
     NDK_TOOLCHAIN_VERSION = project.properties['de.felixnuesse.extract.ndkToolchainVersion']
     RCLONE_VERSION = project.properties['de.felixnuesse.extract.rCloneVersion']
     GO_REQ_VERSION = project.properties['de.felixnuesse.extract.goVersion']
-    RCLONE_MODULE = 'github.com/rclone/rclone'
+    RCLONE_MODULE = 'github.com/joseavilasg/rclone'
+    ORIGINAL_RCLONE_MODULE = 'github.com/rclone/rclone'
     RCLONE_CUSTOM_VERSION_SUFFIX = '-extract'
 
     PROJECT_DIR = projectDir.absolutePath
@@ -151,7 +152,7 @@ def buildRclone(abi) {
                 environment 'CGO_LDFLAGS', '-fuse-ld=lld -Wl,--hash-style=both -s'
                 abiToEnv[abi].each {entry -> environment entry.key, entry.value}
                 workingDir CACHE_PATH
-                def ldflags = "-buildid= -X github.com/rclone/rclone/fs.Version=${RCLONE_VERSION}${RCLONE_CUSTOM_VERSION_SUFFIX}"
+                def ldflags = "-buildid= -X github.com/joseavilasg/rclone/fs.Version=${RCLONE_VERSION}${RCLONE_CUSTOM_VERSION_SUFFIX}"
                 commandLine (
                     'go',
                     'build',
@@ -162,7 +163,7 @@ def buildRclone(abi) {
                     ldflags,
                     '-o',
                     getOutputPath(abi),
-                    RCLONE_MODULE
+                    ORIGINAL_RCLONE_MODULE
                 )
             }
         }
@@ -176,7 +177,7 @@ task createRcloneModule(type: Exec) {
     Paths.get(CACHE_PATH).toFile().mkdirs()
     workingDir CACHE_PATH
     environment 'GOPATH', GOPATH
-    commandLine 'go', 'mod', 'init', 'rclone'
+    commandLine 'sh', '-c', "go mod init rclone && go mod edit -replace ${ORIGINAL_RCLONE_MODULE}=${RCLONE_MODULE}@v${RCLONE_VERSION}"
 }
 
 task checkoutRclone(type: Exec, dependsOn: createRcloneModule) {
@@ -197,7 +198,7 @@ task checkoutRclone(type: Exec, dependsOn: createRcloneModule) {
     }
     println "You are building rclone v${RCLONE_VERSION}"
 
-    commandLine 'go', 'get', '-v', '-d', "${RCLONE_MODULE}@v${RCLONE_VERSION}"
+    commandLine 'go', 'get', '-v', '-d', "${ORIGINAL_RCLONE_MODULE}@v${RCLONE_VERSION}"
 }
 
 task buildArm(dependsOn: checkoutRclone) {

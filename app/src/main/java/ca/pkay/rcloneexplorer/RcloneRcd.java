@@ -171,7 +171,7 @@ public class RcloneRcd {
         environmentValues.add("TMPDIR=" + tmpDir);
 
         // ignore chtimes errors
-        // ref: https://github.com/rclone/rclone/issues/2446
+        // ref: https://github.com/joseavilasg/rclone/issues/2446
         environmentValues.add("RCLONE_LOCAL_NO_SET_MODTIME=true");
         return environmentValues.toArray(new String[0]);
     }

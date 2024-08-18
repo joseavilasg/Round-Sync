@@ -179,7 +179,7 @@ public class Rclone {
         environmentValues.add("TMPDIR=" + tmpDir);
 
         // ignore chtimes errors
-        // ref: https://github.com/rclone/rclone/issues/2446
+        // ref: https://github.com/joseavilasg/rclone/issues/2446
         environmentValues.add("RCLONE_LOCAL_NO_SET_MODTIME=true");
 
         // Allow the caller to overwrite any option for special cases
@@ -253,7 +253,7 @@ public class Rclone {
         String[] command;
         if (remote.isRemoteType(RemoteItem.LOCAL) || remote.isPathAlias()) {
             // ignore .android_secure errors
-            // ref: https://github.com/rclone/rclone/issues/3179
+            // ref: https://github.com/joseavilasg/rclone/issues/3179
             command = createCommandWithOptions("--ignore-errors", "lsjson", remoteAndPath);
         } else {
             command = createCommandWithOptions("lsjson", remoteAndPath);
