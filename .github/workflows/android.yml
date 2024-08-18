@@ -30,6 +30,10 @@ jobs:
       run: |
         NDK_VERSION="$(grep -E "^de\.felixnuesse\.extract\.ndkVersion=" gradle.properties | cut -d'=' -f2)"
         sdkmanager "ndk;${NDK_VERSION}"
+    - name: Create keystore directory
+      run: mkdir -p /home/runner/work/Round-Sync/Round-Sync/app/.config/android/
+    - name: Create keystore file
+      run: echo "${{ secrets.ANDROID_KEYSTORE }}" | base64 --decode > /home/runner/work/Round-Sync/Round-Sync/app/.config/android/roundsync.keystore
     - name: Build app
       run: ./gradlew assembleOssRelease
     - name: Upload APK (arm)
