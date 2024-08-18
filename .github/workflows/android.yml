@@ -34,6 +34,10 @@ jobs:
       run: mkdir -p /home/runner/work/Round-Sync/Round-Sync/app/.config/android/
     - name: Create keystore file
       run: echo "${{ secrets.ANDROID_KEYSTORE }}" | base64 --decode > /home/runner/work/Round-Sync/Round-Sync/app/.config/android/roundsync.keystore
+    - name: Set environment variables
+      run: |
+        echo "KEYSTORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }}" >> $GITHUB_ENV
+        echo "KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}" >> $GITHUB_ENV
     - name: Build app
       run: ./gradlew assembleOssRelease
     - name: Upload APK (arm)
